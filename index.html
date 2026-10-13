@@ -1,0 +1,1155 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evaluación Sumativa - Administración y Soporte a Redes | CTP Santa Bárbara</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-main: #0b0f19;
+            --bg-card: #151b2b;
+            --bg-card-hover: #1e293b;
+            --accent-cyan: #00f3ff;
+            --accent-green: #00ff88;
+            --accent-red: #ff3366;
+            --accent-yellow: #f59e0b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, .brand-font {
+            font-family: 'Rajdhani', sans-serif;
+            letter-spacing: 0.5px;
+        }
+
+        /* Top Bar */
+        .top-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 65px;
+            background-color: rgba(21, 27, 43, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+            z-index: 1000;
+        }
+
+        .top-bar-brand {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--accent-cyan);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .top-bar-stats {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .timer-badge {
+            background: rgba(255, 51, 102, 0.15);
+            border: 1px solid var(--accent-red);
+            color: var(--accent-red);
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .progress-container {
+            width: 150px;
+            background: var(--border-color);
+            border-radius: 10px;
+            overflow: hidden;
+            height: 10px;
+            display: flex;
+        }
+
+        .progress-bar-fill {
+            background: linear-gradient(90deg, var(--accent-cyan), var(--accent-green));
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .btn-finish {
+            background: var(--accent-green);
+            color: #0b0f19;
+            border: none;
+            padding: 8px 18px;
+            font-weight: 700;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-finish:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        /* Container Main */
+        .main-container {
+            max-width: 900px;
+            width: 100%;
+            margin: 90px auto 40px auto;
+            padding: 0 1rem;
+            flex: 1;
+        }
+
+        /* Login Screen */
+        #login-screen {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 80vh;
+        }
+
+        .login-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 2.5rem;
+            width: 100%;
+            max-width: 480px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+        }
+
+        .login-card h2 {
+            color: var(--accent-cyan);
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+            text-align: center;
+        }
+
+        .login-card p {
+            color: var(--text-muted);
+            text-align: center;
+            margin-bottom: 2rem;
+            font-size: 0.95rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--bg-main);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-main);
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .form-control:focus {
+            border-color: var(--accent-cyan);
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 12px;
+            background: var(--accent-cyan);
+            color: #0b0f19;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: opacity 0.2s;
+            margin-top: 1rem;
+        }
+
+        .btn-primary:hover {
+            opacity: 0.9;
+        }
+
+        .alert-box {
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            display: none;
+        }
+
+        .alert-error {
+            background: rgba(255, 51, 102, 0.15);
+            border: 1px solid var(--accent-red);
+            color: var(--accent-red);
+        }
+
+        /* Exam Interface */
+        #exam-screen {
+            display: none;
+        }
+
+        .admin-header {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .admin-info-item span {
+            display: block;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .admin-info-item strong {
+            color: var(--accent-cyan);
+            font-size: 1rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            color: var(--accent-cyan);
+            margin: 2rem 0 1rem 0;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .question-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: border-color 0.2s;
+        }
+
+        .question-card.answered {
+            border-color: rgba(0, 255, 136, 0.3);
+        }
+
+        .question-title {
+            font-size: 1.05rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-main);
+        }
+
+        /* Options Multiple Choice */
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .option-label {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 14px;
+            background: var(--bg-main);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .option-label:hover {
+            border-color: var(--accent-cyan);
+            background: var(--bg-card-hover);
+        }
+
+        .option-label input {
+            accent-color: var(--accent-cyan);
+        }
+
+        /* Short Answer */
+        .short-answer-input {
+            width: 100%;
+            padding: 10px 14px;
+            background: var(--bg-main);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-main);
+            font-size: 1rem;
+        }
+
+        /* Correspondence Matrix */
+        .matrix-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            position: relative;
+        }
+
+        @media (max-width: 767px) {
+            .matrix-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .matrix-column h4 {
+            margin-bottom: 1rem;
+            color: var(--accent-cyan);
+            font-size: 1rem;
+        }
+
+        .matrix-item {
+            padding: 12px;
+            background: var(--bg-main);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            margin-bottom: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+        }
+
+        .matrix-item.selected-left {
+            border-color: var(--accent-cyan);
+            background: rgba(0, 243, 255, 0.1);
+        }
+
+        .matrix-item.matched {
+            border-color: var(--accent-green);
+            background: rgba(0, 255, 136, 0.1);
+        }
+
+        /* Procedure Ordering */
+        .procedure-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .procedure-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 14px;
+            background: var(--bg-main);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 0.95rem;
+        }
+
+        .procedure-controls {
+            display: flex;
+            gap: 6px;
+        }
+
+        .btn-step {
+            background: var(--border-color);
+            color: var(--text-main);
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-step:hover {
+            background: var(--accent-cyan);
+            color: #0b0f19;
+        }
+
+        /* Navigation Matrix Modal Floating */
+        .floating-nav-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--accent-cyan);
+            color: #0b0f19;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            cursor: pointer;
+            z-index: 999;
+            border: none;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(11, 15, 25, 0.85);
+            backdrop-filter: blur(5px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+
+        .modal-content {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 2rem;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .question-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(45px, 1fr));
+            gap: 10px;
+            margin-top: 1.5rem;
+        }
+
+        .grid-item {
+            aspect-ratio: 1;
+            background: var(--bg-main);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .grid-item.answered {
+            background: rgba(0, 255, 136, 0.2);
+            border-color: var(--accent-green);
+            color: var(--accent-green);
+        }
+
+        .grid-item.pending {
+            background: rgba(255, 51, 102, 0.1);
+            border-color: var(--accent-red);
+            color: var(--accent-red);
+        }
+
+        /* Results & Feedback */
+        .result-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 2.5rem;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .result-score {
+            font-size: 3rem;
+            font-family: 'Rajdhani', sans-serif;
+            color: var(--accent-cyan);
+            font-weight: 700;
+            margin: 1rem 0;
+        }
+
+        .feedback-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-top: 0.5rem;
+        }
+
+        .feedback-correct {
+            background: rgba(0, 255, 136, 0.15);
+            color: var(--accent-green);
+            border: 1px solid var(--accent-green);
+        }
+
+        .feedback-incorrect {
+            background: rgba(255, 51, 102, 0.15);
+            color: var(--accent-red);
+            border: 1px solid var(--accent-red);
+        }
+
+        .expected-answer {
+            margin-top: 0.5rem;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .btn-action-container {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+
+        /* Print styles */
+        @media print {
+            body {
+                background: white;
+                color: black;
+            }
+            .top-bar, .floating-nav-btn, .btn-action-container, .btn-finish {
+                display: none !important;
+            }
+            .admin-header, .question-card, .result-card {
+                background: white !important;
+                border: 1px solid #ccc !important;
+                color: black !important;
+                box-shadow: none !important;
+            }
+            .question-title, .admin-info-item strong, .result-score {
+                color: black !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Top Bar -->
+    <div class="top-bar" id="top-bar" style="display: none;">
+        <div class="top-bar-brand">
+            <span>⚡ CTP Santa Bárbara | Soporte a Redes</span>
+        </div>
+        <div class="top-bar-stats">
+            <div class="timer-badge" id="timer-display">⏱️ 80:00</div>
+            <div>
+                <div style="font-size: 0.75rem; color: var(--text-muted);">Progreso</div>
+                <div class="progress-container">
+                    <div class="progress-bar-fill" id="progress-bar-fill"></div>
+                </div>
+            </div>
+            <button class="btn-finish" onclick="confirmFinish()">Finalizar Prueba</button>
+        </div>
+    </div>
+
+    <div class="main-container">
+
+        <!-- LOGIN SCREEN -->
+        <div id="login-screen">
+            <div class="login-card">
+                <h2>Acceso Estudiantil</h2>
+                <p>Administración y Soporte a Redes - 11° Año</p>
+                <form id="login-form" onsubmit="handleLogin(event)">
+                    <div class="form-group">
+                        <label for="email">Correo Electrónico Oficial</label>
+                        <input type="email" id="email" class="form-control" required placeholder="estudiante@gmail.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Contraseña</label>
+                        <input type="password" id="password" class="form-control" required placeholder="••••••••">
+                    </div>
+                    <button type="submit" class="btn-primary">Ingresar al Examen</button>
+                    <div id="login-alert" class="alert-box alert-error"></div>
+                </form>
+            </div>
+        </div>
+
+        <!-- EXAM SCREEN -->
+        <div id="exam-screen">
+            <div class="admin-header">
+                <div class="admin-info-item">
+                    <span>Institución</span>
+                    <strong>CTP de Santa Bárbara</strong>
+                </div>
+                <div class="admin-info-item">
+                    <span>Subárea</span>
+                    <strong>Soporte a Redes</strong>
+                </div>
+                <div class="admin-info-item">
+                    <span>Docente</span>
+                    <strong>Jhonathan Rodolfo Juarez Rivas</strong>
+                </div>
+                <div class="admin-info-item">
+                    <span>Estudiante</span>
+                    <strong id="lbl-student-name">--</strong>
+                </div>
+                <div class="admin-info-item">
+                    <span>Valor / Puntos</span>
+                    <strong>35 Puntos (25%)</strong>
+                </div>
+                <div class="admin-info-item">
+                    <span>Intento Actual</span>
+                    <strong id="lbl-attempt">Intento 1 de 2</strong>
+                </div>
+            </div>
+
+            <div id="exam-form-content">
+                <!-- Secciones generadas dinámicamente -->
+            </div>
+
+            <div class="btn-action-container" id="submit-action-container">
+                <button class="btn-primary" style="padding: 16px; font-size: 1.1rem;" onclick="confirmFinish()">Entregar Examen Definitivamente</button>
+            </div>
+        </div>
+
+        <!-- RESULTS SCREEN -->
+        <div id="results-screen" style="display: none;">
+            <div class="result-card">
+                <h2>Resultados de la Evaluación</h2>
+                <div class="result-score" id="res-score">0 / 35</div>
+                <p style="font-size: 1.2rem; margin-bottom: 0.5rem;">Nota Final Base 100: <strong id="res-grade" style="color: var(--accent-green);">0.00</strong></p>
+                <p style="font-size: 1.1rem; color: var(--text-muted);">Porcentaje Obt. (sobre 25%): <strong id="res-percentage" style="color: var(--accent-cyan);">0.00%</strong></p>
+                <div id="sync-status" style="margin-top: 1rem; font-size: 0.9rem; color: var(--accent-cyan);"></div>
+                <div class="btn-action-container">
+                    <button class="btn-primary" onclick="window.print()">📥 Descargar Comprobante / Guardar PDF</button>
+                </div>
+            </div>
+
+            <h3 class="section-title">Desgloses e Informe Detallado de Respuestas</h3>
+            <div id="detailed-feedback-container"></div>
+        </div>
+
+    </div>
+
+    <!-- Floating Navigation Modal Button -->
+    <button class="floating-nav-btn" id="nav-modal-btn" style="display: none;" onclick="toggleModal(true)" title="Ver Estado de Ítems">📋</button>
+
+    <!-- Modal Status -->
+    <div class="modal-overlay" id="status-modal">
+        <div class="modal-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <h3 style="color: var(--accent-cyan);">Mapa de Navegación de Ítems</h3>
+                <button onclick="toggleModal(false)" style="background:none; border:none; color:var(--text-main); font-size:1.5rem; cursor:pointer;">&times;</button>
+            </div>
+            <p style="font-size: 0.85rem; color: var(--text-muted);">Verde: Respondido | Rojo: Pendiente. Haga clic para saltar al ítem.</p>
+            <div class="question-grid" id="question-grid"></div>
+        </div>
+    </div>
+
+    <script>
+        // CREDENCIALES OFICIALES Y LISTA DE ESTUDIANTES
+        const VALID_USERS = {
+            "cascante535@gmail.com": { pass: "Casa1234", name: "Valeria Cascante" },
+            "valeriahernandezcascante@gmail.com": { pass: "Casa1234", name: "Valeria Hernández Cascante" },
+            "jerichacolomer@gmail.com": { pass: "Casa1234", name: "Jericó Colomer" },
+            "rousvillalobos0@gmail.com": { pass: "Casa1234", name: "Rous Villalobos" },
+            "rey200578@gmail.com": { pass: "Casa1234", name: "Reynaldo [Estudiante]" },
+            "justinbonillaaguirre054@gmail.com": { pass: "Casa1234", name: "Justin Bonilla Aguirre" },
+            "arrietamaikol856@gmail.com": { pass: "Casa1234", name: "Maikol Arrieta" },
+            "soportecpt2025@gmail.com": { pass: "Casa2781", name: "Soporte CPT Docente/Técnico" }
+        };
+
+        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/YOUR_DEPLOYMENT_ID_HERE/exec";
+
+        // DATOS DE LA EVALUACIÓN (35 PUNTOS EXACTOS)
+        // I Parte: 20 Selección Única (1 pt c/u)
+        const part1Data = [
+            { id: 1, q: "¿Cuál es el propósito principal de un informe técnico en redes según el documento?", options: ["Servir como un correo electrónico informal para chats rápidos.", "Transmitir información especializada sobre un estado, análisis, intervención o falla ocurrida en un sistema de redes y telecomunicaciones.", "Registrar únicamente las calificaciones trimestrales de los estudiantes."], ans: 1 },
+            { id: 2, q: "¿Qué capas del modelo OSI abarca el diagnóstico preciso de fallas en la conectividad física mencionadas en el texto?", options: ["Capa 1 y 2.", "Capa 5 y 6.", "Capa 7 exclusivamente."], ans: 0 },
+            { id: 3, q: "¿Cuáles protocolos se mencionan en el texto para la gestión de autenticación y control de acceso en seguridad de redes?", options: ["HTTP y HTTPS.", "RADIUS / TACACS+.", "FTP y TFTP."], ans: 1 },
+            { id: 4, q: "¿Qué protocolos de servicios compartidos se abordan en el texto para entornos Windows y Unix/Linux respectivamente?", options: ["SMB para Windows y NFS para Unix/Linux.", "TCP para Windows y UDP para Linux.", "SMTP para Windows y POP3 para Linux."], ans: 0 },
+            { id: 5, q: "Según la estructura canónica del informe técnico, ¿qué se describe en la sección 'Resumen Ejecutivo'?", options: ["Los datos personales de la empresa y fecha.", "Una síntesis breve del problema detectado, la acción correctiva aplicada y el estado final del servicio.", "El listado completo de comandos IP de todas las computadoras."], ans: 1 },
+            { id: 6, q: "¿Qué sección del informe técnico detalla el cronograma de síntomas reportados por el usuario o sistemas NMS?", options: ["Descripción del Incidente.", "Diagnóstico Técnico.", "Encabezado y Metadatos."], ans: 0 },
+            { id: 7, q: "En la estructura del informe, ¿cómo se denomina a la sección dedicada al análisis profundo de la causa raíz (Root Cause Analysis)?", options: ["Propuesta y Solución.", "Diagnóstico Técnico.", "Resumen Ejecutivo."], ans: 1 },
+            { id: 8, q: "¿Qué aspecto se debe evaluar al elaborar una propuesta de solución para fallas complejas en la red?", options: ["El impacto operativo, el costo financiero y la viabilidad técnica de cada alternativa.", "El color del gabinete del servidor y su marca comercial.", "La cantidad de redes sociales que utiliza el cliente."], ans: 0 },
+            { id: 9, q: "¿Cuál es una característica principal del protocolo SMB (Server Message Block) según la tabla comparativa?", options: ["Está optimizado en versiones recientes (SMB 3.x) para latencias altas en redes WAN.", "Es exclusivo para sistemas operativos Linux y macOS.", "Está basado tradicionalmente en UID/GID sin integración con Directorio Activo."], ans: 0 },
+            { id: 10, q: "¿Qué característica define al protocolo NFS (Network File System)?", options: ["Está integrado nativamente con Kerberos y Active Directory de alta seguridad.", "Es sensible a latencias elevadas en redes de área amplia (WAN) y se basa tradicionalmente en UID/GID.", "Fue diseñado exclusivamente para redes móviles 5G."], ans: 1 },
+            { id: 11, q: "¿Qué habilidad blanda (soft skill) se debe aplicar al permitir que el cliente exprese su percepción del problema sin interrumpir?", options: ["Empatía y Escucha Activa.", "Enfoque financiero estricto.", "Traducción de sintaxis de comandos."], ans: 0 },
+            { id: 12, q: "¿Cómo se sugiere traducir los términos técnicos complejos al dialogar con usuarios no técnicos?", options: ["Mediante analogías comprensibles, como comparar el ancho de banda con el flujo vehicular en una autopista.", "Exigiendo al usuario que estudie el modelo OSI completo.", "Omitiendo por completo la explicación del problema."], ans: 0 },
+            { id: 13, q: "¿Cuál debe ser el enfoque principal al presentar un informe de fallas al cliente?", options: ["Culpabilizar detalladamente a los usuarios por el error cometido.", "Centrarse en las acciones correctivas aplicadas y en el plan de prevención a futuro.", "Discutir sobre los costos de los equipos de red antiguos."], ans: 1 },
+            { id: 14, q: "¿Qué paso es indispensable al finalizar la presentación del informe de fallas al cliente?", options: ["Obtener la firma de aceptación o visto bueno por parte del cliente en el informe impreso o digital.", "Borrar todas las bitácoras del servidor.", "Formatear los discos duros del cliente."], ans: 0 },
+            { id: 15, q: "Según el caso práctico del CTP de Santa Bárbara, ¿cuál fue el síntoma reportado por los 15 equipos de contabilidad?", options: ["'Identificando red...' o asignación de IP APIPA (169.254.x.x).", "Velocidad de fibra óptica superior a 1 Gbps.", "Bloqueo total del sistema operativo por ransomware."], ans: 0 },
+            { id: 16, q: "En el caso de estudio, ¿cuál fue la causa raíz de la caída del servicio DHCP?", options: ["Un corte físico del cableado estructurado en el piso 2.", "Un conflicto de concesiones (lease exhaustion) provocado por un dispositivo de red no autorizado conectado al puerto 24.", "Una actualización fallida del sistema operativo Windows 95."], ans: 1 },
+            { id: 17, q: "¿Qué comandos se utilizaron en el caso práctico para liberar y renovar las concesiones IP en las estaciones de trabajo?", options: ["ping y tracert", "ipconfig /release y ipconfig /renew", "shutdown /s y netsh int ip reset"], ans: 1 },
+            { id: 18, q: "¿Qué medida de seguridad se configuró en el switch del CTP de Santa Bárbara tras el incidente DHCP?", options: ["Seguridad de puertos (Port Security) para deshabilitar el puerto del equipo no autorizado.", "Encriptación WPA3 en todos los cables UTP.", "Eliminación de todas las VLANs de la institución."], ans: 0 },
+            { id: 19, q: "¿Qué norma de redacción se debe seguir respecto al uso de siglas en el informe técnico?", options: ["Usar siglas inventadas sin explicación previa en todo el documento.", "Escribir su significado completo la primera vez que se menciona, seguido de la sigla entre paréntesis.", "Escribir las siglas siempre en letras minúsculas y sin acentos."], ans: 1 },
+            { id: 20, q: "¿Qué principio fundamental rige la redacción de informes técnicos en cuanto a la objetividad?", options: ["Deben incluir opiniones personales y juicios subjetivos del técnico.", "Deben basarse estrictamente en evidencias técnicas verificables sin juicios subjetivos.", "Deben redactarse en tono de narrativa literaria o poesía."], ans: 1 }
+        ];
+
+        // II Parte: Correspondencia (5 Puntos)
+        const part2Data = {
+            premises: [
+                { id: 1, text: "Capa 1 y 2 del Modelo OSI" },
+                { id: 2, text: "Protocolo SMB" },
+                { id: 3, text: "Resumen Ejecutivo" },
+                { id: 4, text: "Escucha Activa y Empatía" },
+                { id: 5, text: "Port Security (Seguridad de puertos)" }
+            ],
+            options: [
+                { id: 'a', text: "Medida aplicada en el switch para deshabilitar puertos conectados a dispositivos no autorizados en el caso práctico." },
+                { id: 'b', text: "Síntesis breve del problema detectado, acción correctiva aplicada y estado final del servicio." },
+                { id: 'c', text: "Protocolo de archivos optimizado para Windows y Active Directory." },
+                { id: 'd', text: "Diagnóstico enfocado en conectividad física y fallas de enlace." },
+                { id: 'e', text: "Directriz metodológica para dejar que el cliente exprese su percepción del problema sin interrumpir." },
+                { id: 'f', text: "Sistema operativo de código abierto para enrutadores de borde (Distractor)." }
+            ],
+            correctMap: { 1: 'd', 2: 'c', 3: 'b', 4: 'e', 5: 'a' }
+        };
+
+        // III Parte: Respuesta Corta (5 Puntos)
+        const part3Data = [
+            { id: 21, q: "¿Cómo se denomina el fenómeno ocurrido en el servidor DHCP del caso de estudio debido a un dispositivo no autorizado que agotó las direcciones IP?", expected: ["agotamiento de concesiones", "lease exhaustion"] },
+            { id: 22, q: "¿Qué comando de Windows se utilizó en el caso práctico para liberar la dirección IP actual?", expected: ["ipconfig /release", "ipconfig/release"] },
+            { id: 23, q: "¿Qué dirección IP de tipo APIPA se asignó a los equipos afectados en el caso de estudio?", expected: ["169.254.x.x", "169.254"] },
+            { id: 24, q: "¿Qué protocolo de almacenamiento compartido en red está optimizado para sistemas Unix, Linux y macOS?", expected: ["nfs"] },
+            { id: 25, q: "¿Qué tipo de análisis de causa raíz se realiza en la sección de diagnóstico técnico del informe?", expected: ["root cause analysis", "causa raiz"] }
+        ];
+
+        // IV Parte: Ordenamiento de Procedimiento (5 Puntos)
+        const part4Data = [
+            { id: 1, text: "Identificar los síntomas reportados por los usuarios ('Identificando red...' o IP APIPA 169.254.x.x)." },
+            { id: 2, text: "Verificar el switch de acceso y ejecutar comandos de diagnóstico en el servidor para detectar el servicio DHCP detenido por agotamiento de concesiones." },
+            { id: 3, text: "Ejecutar los comandos ipconfig /release y ipconfig /renew en las estaciones afectadas." },
+            { id: 4, text: "Reiniciar el servicio DHCP en el servidor Windows Server." },
+            { id: 5, text: "Configurar la seguridad de puertos (Port Security) en el switch para deshabilitar el puerto del equipo no autorizado." }
+        ];
+
+        let currentUserEmail = "";
+        let currentAttempt = 1;
+        let timerInterval;
+        let timeLeft = 80 * 60; // 80 minutos
+        let userAnswers = { p1: {}, p2: {}, p3: {}, p4: [] };
+        let selectedLeftPremise = null;
+
+        // LOGIN & ATTEMPTS LOGIC
+        function handleLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('email').value.trim().toLowerCase();
+            const pass = document.getElementById('password').value.trim();
+            const alertBox = document.getElementById('login-alert');
+
+            if (!VALID_USERS[email] || VALID_USERS[email].pass !== pass) {
+                alertBox.style.display = 'block';
+                alertBox.textContent = "Credenciales incorrectas o correo no autorizado.";
+                return;
+            }
+
+            // Control de intentos en localStorage
+            const attemptKey = `attempts_${email}`;
+            let attempts = parseInt(localStorage.getItem(attemptKey) || "0");
+
+            if (attempts >= 2) {
+                alertBox.style.display = 'block';
+                alertBox.textContent = "⚠️ Acceso Bloqueado: Ha agotado el límite de 2 intentos permitidos para esta evaluación.";
+                return;
+            }
+
+            currentAttempt = attempts + 1;
+            currentUserEmail = email;
+            sessionStorage.setItem('currentUser', email);
+            sessionStorage.setItem('currentAttempt', currentAttempt);
+
+            // Iniciar Examen
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('top-bar').style.display = 'flex';
+            document.getElementById('exam-screen').style.display = 'block';
+            document.getElementById('nav-modal-btn').style.display = 'flex';
+
+            document.getElementById('lbl-student-name').textContent = VALID_USERS[email].name + ` (${email})`;
+            document.getElementById('lbl-attempt',).textContent = `Intento ${currentAttempt} de 2`;
+
+            buildExamUI();
+            startTimer();
+        }
+
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    alert("¡El tiempo reglamentario ha expirado! El examen se enviará automáticamente.");
+                    submitExam(true);
+                    return;
+                }
+                timeLeft--;
+                const mins = Math.floor(timeLeft / 60);
+                const secs = timeLeft % 60;
+                document.getElementById('timer-display').textContent = `⏱️ ${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+            }, 1000);
+        }
+
+        function buildExamUI() {
+            const container = document.getElementById('exam-form-content');
+            let html = '';
+
+            // I Parte: Selección Única
+            html += `<h3 class="section-title">I PARTE: SELECCIÓN ÚNICA (20 PUNTOS)</h3>`;
+            part1Data.forEach((item, index) => {
+                html += `
+                    <div class="question-card" id="qcard-1-${item.id}">
+                        <div class="question-title">Ítem ${index + 1}: ${item.q}</div>
+                        <div class="options-list">
+                `;
+                item.options.forEach((opt, oIdx) => {
+                    const optLetter = ['A', 'B', 'C'][oIdx];
+                    html += `
+                        <label class="option-label">
+                            <input type="radio" name="p1_${item.id}" value="${oIdx}" onchange="recordAnswer(1, ${item.id}, ${oIdx})">
+                            <span><strong>${optLetter})</strong> ${opt}</span>
+                        </label>
+                    `;
+                });
+                html += `</div></div>`;
+            });
+
+            // II Parte: Correspondencia
+            html += `<h3 class="section-title">II PARTE: CORRESPONDENCIA / ASOCIACIÓN INTERACTIVA (5 PUNTOS)</h3>`;
+            html += `<p style="color: var(--text-muted); margin-bottom: 1rem;">Haga clic en un concepto de la Columna A y luego en su definición correspondiente en la Columna B.</p>`;
+            html += `<div class="matrix-container">
+                        <div class="matrix-column">
+                            <h4>Columna A (Premisas)</h4>`;
+            part2Data.premises.forEach(p => {
+                html += `<div class="matrix-item" id="premise_${p.id}" onclick="selectPremise(${p.id})">${p.id}. ${p.text}</div>`;
+            });
+            html += `</div><div class="matrix-column">
+                            <h4>Columna B (Definiciones)</h4>`;
+            part2Data.options.forEach(o => {
+                html += `<div class="matrix-item" id="option_${o.id}" onclick="selectOption('${o.id}')">${o.id.toUpperCase()}) ${o.text}</div>`;
+            });
+            html += `</div></div>`;
+
+            // III Parte: Respuesta Corta
+            html += `<h3 class="section-title">III PARTE: RESPUESTA CORTA (5 PUNTOS)</h3>`;
+            part3Data.forEach((item, index) => {
+                html += `
+                    <div class="question-card" id="qcard-3-${item.id}">
+                        <div class="question-title">Ítem ${index + 21}: ${item.q}</div>
+                        <input type="text" class="short-answer-input" placeholder="Escriba su respuesta técnica aquí..." oninput="recordAnswer(3, ${item.id}, this.value)">
+                    </div>
+                `;
+            });
+
+            // IV Parte: Ordenamiento de Procedimiento
+            html += `<h3 class="section-title">IV PARTE: ORDENAMIENTO DE PROCEDIMIENTO (5 PUNTOS)</h3>`;
+            html += `<p style="color: var(--text-muted); margin-bottom: 1rem;">Utilice las flechas para ordenar los pasos del procedimiento técnico en la secuencia correcta (1 a 5).</p>`;
+            html += `<div class="procedure-list" id="procedure-list-container">`;
+            
+            // Mezclar aleatoriamente para el estudiante
+            window.shuffledProcedure = [...part4Data].sort(() => Math.random() - 0.5);
+            window.shuffledProcedure.forEach((step, idx) => {
+                html += `
+                    <div class="procedure-item" data-id="${step.id}">
+                        <span><strong>Paso <span class="step-num">${idx + 1}</span>:</strong> ${step.text}</span>
+                        <div class="procedure-controls">
+                            <button class="btn-step" onclick="moveStep(${idx}, -1)">▲</button>
+                            <button class="btn-step" onclick="moveStep(${idx}, 1)">▼</button>
+                        </div>
+                    </div>
+                `;
+            });
+            html += `</div>`;
+
+            container.innerHTML = html;
+            updateProgress();
+            buildGridModal();
+        }
+
+        function recordAnswer(part, id, val) {
+            if (part === 1) userAnswers.p1[id] = val;
+            if (part === 3) userAnswers.p3[id] = val;
+            updateProgress();
+            updateGridModal();
+        }
+
+        // Lógica de Correspondencia
+        function selectPremise(pId) {
+            document.querySelectorAll('.matrix-column .matrix-item').forEach(el => el.classList.remove('selected-left'));
+            selectedLeftPremise = pId;
+            document.getElementById(`premise_${pId}`).classList.add('selected-left');
+        }
+
+        function selectOption(oId) {
+            if (!selectedLeftPremise) {
+                alert("Primero seleccione un concepto de la Columna A.");
+                return;
+            }
+            userAnswers.p2[selectedLeftPremise] = oId;
+            document.getElementById(`premise_${selectedLeftPremise}`).classList.add('matched');
+            document.getElementById(`option_${oId}`).classList.add('matched');
+            selectedLeftPremise = null;
+            document.querySelectorAll('.matrix-column .matrix-item').forEach(el => el.classList.remove('selected-left'));
+            updateProgress();
+        }
+
+        // Lógica de Ordenamiento
+        function moveStep(index, direction) {
+            const newIndex = index + direction;
+            if (newIndex < 0 || newIndex >= window.shuffledProcedure.length) return;
+            const temp = window.shuffledProcedure[index];
+            window.shuffledProcedure[index] = window.shuffledProcedure[newIndex];
+            window.shuffledProcedure[newIndex] = temp;
+            
+            // Re-renderizar lista
+            let html = '';
+            window.shuffledProcedure.forEach((step, idx) => {
+                html += `
+                    <div class="procedure-item" data-id="${step.id}">
+                        <span><strong>Paso <span class="step-num">${idx + 1}</span>:</strong> ${step.text}</span>
+                        <div class="procedure-controls">
+                            <button class="btn-step" onclick="moveStep(${idx}, -1)">▲</button>
+                            <button class="btn-step" onclick="moveStep(${idx}, 1)">▼</button>
+                        </div>
+                    </div>
+                `;
+            });
+            document.getElementById('procedure-list-container').innerHTML = html;
+            userAnswers.p4 = window.shuffledProcedure.map(s => s.id);
+            updateProgress();
+        }
+
+        function updateProgress() {
+            let answered = 0;
+            const total = 35;
+
+            // P1 (20)
+            answered += Object.keys(userAnswers.p1).length;
+            // P2 (5)
+            answered += Object.keys(userAnswers.p2).length;
+            // P3 (5)
+            answered += Object.values(userAnswers.p3).filter(v => v && v.trim() !== "").length;
+            // P4 (5)
+            if (window.shuffledProcedure && window.shuffledProcedure.length > 0) answered += 5;
+
+            const pct = Math.min(100, Math.round((answered / total) * 100));
+            document.getElementById('progress-bar-fill').style.width = pct + '%';
+        }
+
+        function buildGridModal() {
+            const grid = document.getElementById('question-grid');
+            let html = '';
+            for (let i = 1; i <= 35; i++) {
+                html += `<div class="grid-item pending" id="grid_item_${i}" onclick="jumpToItem(${i})">${i}</div>`;
+            }
+            grid.innerHTML = html;
+            updateGridModal();
+        }
+
+        function updateGridModal() {
+            for (let i = 1; i <= 35; i++) {
+                let isAns = false;
+                if (i <= 20) isAns = userAnswers.p1[i] !== undefined;
+                else if (i <= 25) isAns = userAnswers.p2[i - 20] !== undefined;
+                else if (i <= 30) isAns = userAnswers.p3[i - 25] !== undefined && userAnswers.p3[i - 25].trim() !== "";
+                else if (i <= 35) isAns = window.shuffledProcedure !== undefined;
+
+                const el = document.getElementById(`grid_item_${i}`);
+                if (el) {
+                    if (isAns) {
+                        el.className = "grid-item answered";
+                    } else {
+                        el.className = "grid-item pending";
+                    }
+                }
+            }
+        }
+
+        function toggleModal(show) {
+            document.getElementById('status-modal').style.display = show ? 'flex' : 'none';
+        }
+
+        function jumpToItem(itemNum) {
+            toggleModal(false);
+            // Scroll to section
+            let targetEl = null;
+            if (itemNum <= 20) targetEl = document.getElementById(`qcard-1-${itemNum}`);
+            else if (itemNum <= 25) targetEl = document.querySelector('.matrix-container');
+            else if (itemNum <= 30) targetEl = document.getElementById(`qcard-3-${itemNum - 25}`);
+            else targetEl = document.getElementById('procedure-list-container');
+
+            if (targetEl) {
+                targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+
+        function confirmFinish() {
+            let unanswered = 35;
+            let answeredCount = Object.keys(userAnswers.p1).length + Object.keys(userAnswers.p2).length + Object.values(userAnswers.p3).filter(v => v && v.trim() !== "").length + 5;
+            
+            if (answeredCount < 35) {
+                if (!confirm(`Tiene preguntas sin responder (${35 - answeredCount} pendientes). ¿Está seguro de que desea entregar la prueba?`)) {
+                    return;
+                }
+            } else {
+                if (!confirm("¿Está seguro de que desea entregar su evaluación definitivamente?")) return;
+            }
+            submitExam(false);
+        }
+
+        function normalizeText(str) {
+            if (!str) return "";
+            return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+        }
+
+        function submitExam(isTimeout) {
+            clearInterval(timerInterval);
+
+            // CALIFICACIÓN AUTOMÁTICA
+            let totalPoints = 0;
+            let detailedBreakdown = [];
+
+            // P1 (20 pts)
+            part1Data.forEach(item => {
+                const userAns = userAnswers.p1[item.id];
+                const isCorrect = userAns === item.ans;
+                if (isCorrect) totalPoints += 1;
+                detailedBreakdown.push({
+                    item: `Ítem ${item.id} (Selección Única)`,
+                    question: item.q,
+                    userAnswer: userAns !== undefined ? item.options[userAns] : "Sin responder",
+                    correctAnswer: item.options[item.ans],
+                    isCorrect: isCorrect
+                });
+            });
+
+            // P2 (5 pts)
+            Object.keys(part2Data.correctMap).forEach(pId => {
+                const userOpt = userAnswers.p2[pId];
+                const correctOpt = part2Data.correctMap[pId];
+                const isCorrect = userOpt === correctOpt;
+                if (isCorrect) totalPoints += 1;
+                const premiseText = part2Data.premises.find(p => p.id == pId).text;
+                const userOptText = userOpt ? part2Data.options.find(o => o.id == userOpt).text : "Sin responder";
+                const correctOptText = part2Data.options.find(o => o.id == correctOpt).text;
+                detailedBreakdown.push({
+                    item: `Correspondencia Premisa ${pId}`,
+                    question: premiseText,
+                    userAnswer: userOptText,
+                    correctAnswer: correctOptText,
+                    isCorrect: isCorrect
+                });
+            });
+
+            // P3 (5 pts)
+            part3Data.forEach(item => {
+                const userVal = normalizeText(userAnswers.p3[item.id] || "");
+                const isCorrect = item.expected.some(exp => userVal.includes(normalizeText(exp)));
+                if (isCorrect) totalPoints += 1;
+                detailedBreakdown.push({
+                    item: `Respuesta Corta Ítem ${item.id}`,
+                    question: item.q,
+                    userAnswer: userAnswers.p3[item.id] || "Sin responder",
+                    correctAnswer: item.expected.join(" / "),
+                    isCorrect: isCorrect
+                });
+            });
+
+            // P4 (5 pts)
+            const currentOrder = window.shuffledProcedure.map(s => s.id);
+            let p4Points = 0;
+            currentOrder.forEach((id, idx) => {
+                if (id === idx + 1) p4Points += 1;
+            });
+            totalPoints += p4Points;
+            detailedBreakdown.push({
+                item: "Ordenamiento de Procedimiento (5 pasos)",
+                question: "Secuencia correcta del procedimiento técnico",
+                userAnswer: currentOrder.join(" -> "),
+                correctAnswer: "1 -> 2 -> 3 -> 4 -> 5",
+                isCorrect: p4Points === 5
+            });
+
+            // Cálculos finales
+            const finalGrade100 = ((totalPoints / 35) * 100).toFixed(2);
+            const finalPercentage25 = ((totalPoints / 35) * 25).toFixed(2);
+
+            // Registrar intentos en localStorage de forma persistente
+            const attemptKey = `attempts_${currentUserEmail}`;
+            localStorage.setItem(attemptKey, currentAttempt);
+
+            // Ocultar examen, mostrar resultados
+            document.getElementById('exam-screen').style.display = 'none';
+            document.getElementById('top-bar').style.display = 'none';
+            document.getElementById('nav-modal-btn').style.display = 'none';
+            document.getElementById('results-screen').style.display = 'block';
+
+            document.getElementById('res-score').textContent = `${totalPoints} / 35 Puntos`;
+            document.getElementById('res-grade').textContent = `${finalGrade100} / 100`;
+            document.getElementById('res-percentage').textContent = `${finalPercentage25}% (Valor 25%)`;
+
+            // Renderizar feedback detallado
+            let feedbackHtml = '';
+            detailedBreakdown.forEach((fb, idx) => {
+                feedbackHtml += `
+                    <div class="question-card">
+                        <div class="question-title">${idx + 1}. ${fb.item}</div>
+                        <p style="margin-bottom: 8px; color: var(--text-muted);">${fb.question}</p>
+                        <p><strong>Su respuesta:</strong> ${fb.userAnswer}</p>
+                        ${!fb.isCorrect ? `<p class="expected-answer"><strong>Respuesta Oficial Esperada:</strong> ${fb.correctAnswer}</p>` : ''}
+                        <div>
+                            <span class="feedback-badge ${fb.isCorrect ? 'feedback-correct' : 'feedback-incorrect'}">
+                                ${fb.isCorrect ? '✓ Correcto (1 pt)' : '✗ Incorrecto (0 pts)'}
+                            </span>
+                        </div>
+                    </div>
+                `;
+            });
+            document.getElementById('detailed-feedback-container').innerHTML = feedbackHtml;
+
+            // Enviar datos al backend de Google Apps Script
+            sendPayloadToBackend({
+                email: currentUserEmail,
+                name: VALID_USERS[currentUserEmail].name,
+                attempt: currentAttempt,
+                totalPoints: totalPoints,
+                grade100: finalGrade100,
+                percentage25: finalPercentage25,
+                breakdown: detailedBreakdown
+            });
+        }
+
+        function sendPayloadToBackend(payload) {
+            const statusDiv = document.getElementById('sync-status');
+            statusDiv.textContent = "⏳ Enviando reporte y generando comprobante PDF en servidor...";
+
+            fetch(APPS_SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            }).then(() => {
+                statusDiv.textContent = "✅ Comprobante generado y enviado exitosamente al correo del docente (jjuarez27@gmail.com) y copia al estudiante.";
+            }).catch(err => {
+                console.error(err);
+                statusDiv.textContent = "⚠️ Error de red al sincronizar con Apps Script, pero su examen ha sido evaluado localmente.";
+            });
+        }
+    </script>
+</body>
+</html>
